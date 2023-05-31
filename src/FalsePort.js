@@ -1,6 +1,6 @@
 
 export class FalsePort{
-    getOutput(){
+    result(){
         return false;
     }
 }

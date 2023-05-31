@@ -11,7 +11,10 @@ export class Node{
     constructor(Linput, Rinput, port){
         this.Linput = Linput;
         this.Rinput = Rinput;
-        port.setInput(Linput.getOutput(), Rinput.getOutput());
+
+        if(port.Linput != null && port.Linput != null){
+            port.setInput(Linput.getOutput(), Rinput.getOutput());
+        }
         this.port = port;
         console.log(typeof(port));
     }

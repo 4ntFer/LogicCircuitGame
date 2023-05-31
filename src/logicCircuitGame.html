@@ -12,11 +12,12 @@
     <script src='./Main.js' type = 'module'></script>
 
     <body>
+        <canvas id = "meuCanvas" width = "600" height = "400" style = "border: 1px solid black;"></canvas>>
+
         <script type = "module">
             import {Main} from './Main.js';
             
-            const main = new Main();
-
+            const main = new Main(document.getElementById("meuCanvas").getContext("2d"));
             main.start();
         </script>
     </body>

@@ -1,6 +1,6 @@
 
 export class TruePort{
-    getOutput(){
+    result(){
         return true;
     }
 }

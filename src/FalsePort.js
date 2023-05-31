@@ -1,6 +1,6 @@
 
-export class False{
-    static getResult(){
+export class FalsePort{
+    getOutput(){
         return false;
     }
 }

@@ -2,7 +2,7 @@ export class AndPort{
     val1;
     val2;
 
-    setOutputs(val1, val2){
+    setInput(val1, val2){
         this.val1 = val1;
         this.val2 = val2;
     }

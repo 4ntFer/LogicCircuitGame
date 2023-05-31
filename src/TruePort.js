@@ -1,6 +1,6 @@
 
-export class True{
-    static getResult(){
+export class TruePort{
+    getOutput(){
         return true;
     }
 }

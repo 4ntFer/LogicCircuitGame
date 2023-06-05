@@ -1,4 +1,5 @@
 export class AndPort{
+    id = "AND";
     val1;
     val2;
 

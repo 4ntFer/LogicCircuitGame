@@ -1,4 +1,5 @@
 export class OrPort{
+    id = "OR";
     val1;
     val2;
 

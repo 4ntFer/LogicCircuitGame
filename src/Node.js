@@ -12,8 +12,9 @@ export class Node{
         this.Linput = Linput;
         this.Rinput = Rinput;
 
-        if(port.Linput != null && port.Linput != null){
+        if(Linput != null && Linput != null){
             port.setInput(Linput.getOutput(), Rinput.getOutput());
+        
         }
         this.port = port;
         console.log(typeof(port));
@@ -21,5 +22,6 @@ export class Node{
 
     getOutput(){
         return this.port.result();
+        
     }
 }

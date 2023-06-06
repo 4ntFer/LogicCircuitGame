@@ -7,6 +7,9 @@ export class Node{
     Linput;
     Rinput;
     port;
+    mod = false
+    vet = [];
+    index = 0;
 
     constructor(Linput, Rinput, port){
         this.Linput = Linput;
@@ -23,5 +26,21 @@ export class Node{
     getOutput(){
         return this.port.result();
         
+    }
+
+    setMod(vet){
+        mod = true;
+        vet.push(this.port);
+        this.vet = vet;
+    }
+
+    modify(){
+        if(index < this.vet.size){
+            index++;
+        }else{
+            index = 0;
+        }
+        
+        port = vet[index];
     }
 }

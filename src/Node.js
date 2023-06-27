@@ -4,12 +4,14 @@ import { TruePort } from "./TruePort.js";
 import {FalsePort} from "./FalsePort.js"
 
 export class Node{
+    x = 0;
+    y = 0;
     Linput;
     Rinput;
     port;
     mod = false
     vet = [];
-    index = 0;
+    portIndex = 0;
 
     constructor(Linput, Rinput, port){
         this.Linput = Linput;
@@ -20,27 +22,34 @@ export class Node{
         
         }
         this.port = port;
-        console.log(typeof(port));
     }
 
     getOutput(){
         return this.port.result();
-        
     }
 
     setMod(vet){
-        mod = true;
+        this.mod = true;
         vet.push(this.port);
         this.vet = vet;
+        this.portIndex = vet.length - 1;
+
+        for(let i = 0; i<vet.length -1; i++){
+            let port = vet[i];
+
+            port.setInput(this.Linput.getOutput(), this.Rinput.getOutput());
+        }
     }
 
     modify(){
-        if(index < this.vet.size){
-            index++;
+        //Por que - 1? Sem está dando problema de overflow, mas não sei porque
+        if(this.portIndex < this.vet.length - 1){
+            this.portIndex++;
         }else{
-            index = 0;
+            this.portIndex = 0;
         }
+
         
-        port = vet[index];
+        this.port = this.vet[this.portIndex];
     }
 }

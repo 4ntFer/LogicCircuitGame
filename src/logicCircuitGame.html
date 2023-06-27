@@ -7,17 +7,29 @@
         <meta name='viewport' content='width=device-width, initial-scale=1'>
     </head>
 
-    <style></style>
+    <style>
+        .forCanva{
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+
+        }
+    </style>
 
     <script src='./Main.js' type = 'module'></script>
 
     <body>
-        <canvas id = "meuCanvas" width = "600" height = "400" style = "border: 1px solid black;"></canvas>>
+        <div class = "forCanva">
+            <canvas id = "meuCanvas" width = "600" height = "400" style = "border: 1px solid black;"></canvas>
+        </div>
 
         <script type = "module">
             import {Main} from './Main.js';
             
-            const main = new Main(document.getElementById("meuCanvas").getContext("2d"));
+            const main = new Main(document.getElementById("meuCanvas"), window);
             main.start();
         </script>
     </body>

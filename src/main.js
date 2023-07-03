@@ -6,6 +6,7 @@ import { AndPort } from "./AndPort.js";
 import { OrPort } from "./OrPort.js"; 
 import {handleClick} from "./haddleListener.js";
 import {Ui} from "./Ui.js";
+import {Game} from "./Game.js"
 
 export class Main{
     context;
@@ -22,7 +23,7 @@ export class Main{
     }
 
     start(){
-        const TruePortNode = new Node(null, null, new TruePort);
+        /*const TruePortNode = new Node(null, null, new TruePort);
         const FalsePortNode = new Node(null, null, new FalsePort);
 
         let G = []; // vetor de node
@@ -39,6 +40,21 @@ export class Main{
         this.canva.addEventListener('click', function(event){
             handleClick(event, G);
             ui.paintGameBoard(G[0]);
-        });
+        });*/
+
+        let ui = this.gui;
+
+        let game = new Game();
+        game.init(4,2);
+
+        for(let i = 0 ; i<game.G.length ; i++){
+            console.log(game.G[i]);
+        }
+
+        this.gui.paintGameBoard(game.G[0]);
+        this.canva.addEventListener('click', function(event){
+            handleClick(event, game.G);
+            ui.paintGameBoard(game.G[0]);
+        })
     }
 }

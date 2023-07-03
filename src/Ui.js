@@ -40,8 +40,12 @@ export class Ui{
         this.context.arc(x, y + raio, raio, 0, Math.PI/2, true);
         this.context.stroke();
         
-
-        this.context.fillText(head.port.id, x - raio / 2 , y +raio);
+        if(head.mod){
+            this.context.fillText(head.port.id + "*", x - raio / 2 , y +raio);
+        }else{
+            this.context.fillText(head.port.id, x - raio / 2 , y +raio);
+        }
+        
 
         if(head.Linput != null){
             this.paintLine(xInitLine - 30 , yInitLine - 15, xInitLine - bord, yInitLine + bord/2);

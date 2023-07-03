@@ -6,14 +6,14 @@ import {FalsePort} from "./FalsePort.js"
 export class Node{
     x = 0;
     y = 0;
-    Linput;
-    Rinput;
+    Linput = null;
+    Rinput = null;
     port;
     mod = false
     vet = [];
     portIndex = 0;
 
-    constructor(Linput, Rinput, port){
+    /*constructor(Linput, Rinput, port){
         this.Linput = Linput;
         this.Rinput = Rinput;
 
@@ -22,23 +22,21 @@ export class Node{
         
         }
         this.port = port;
+    }*/
+
+    constructor(){
+
     }
 
     getOutput(){
-        return this.port.result();
+        return this.port.result(this.Linput, this.Rinput);
     }
 
     setMod(vet){
         this.mod = true;
-        vet.push(this.port);
         this.vet = vet;
         this.portIndex = vet.length - 1;
-
-        for(let i = 0; i<vet.length -1; i++){
-            let port = vet[i];
-
-            port.setInput(this.Linput.getOutput(), this.Rinput.getOutput());
-        }
+        this.port = vet[this.portIndex];
     }
 
     modify(){

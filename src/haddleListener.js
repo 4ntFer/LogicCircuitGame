@@ -1,4 +1,4 @@
-import {diametro} from "./constant.js";
+import {CLICK_AREA} from "./Ui.js";
 import {Ui} from "./Ui.js";
 
 export function handleClick(event, G, gui){
@@ -9,8 +9,8 @@ export function handleClick(event, G, gui){
     
     for(let i = 0 ; i < G.length ; i++){
 
-        if(clickX > G[i].x - diametro && clickX < G[i].x + diametro
-            && clickY > G[i].y - diametro && clickY < G[i].y + diametro){
+        if(clickX > G[i].x - CLICK_AREA && clickX < G[i].x + CLICK_AREA
+            && clickY > G[i].y - CLICK_AREA && clickY < G[i].y + CLICK_AREA){
 
             if(G[i].mod){
                 G[i].modify();

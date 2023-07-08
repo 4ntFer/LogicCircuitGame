@@ -16,9 +16,13 @@ const LEAF_HEIGHT = 84;
 const TUBE_WIDTH = 17;
 const TUBE_HEIGHT = 36;
 
-export const CLICK_AREA = PORT_WIDTH;
+const FLOOR_WIDTH = 640;
+const FLOOR_HEIGHT = 360;
 
-const SCALE = 2;
+export const CLICK_AREA_W = PORT_WIDTH;
+export const CLICK_AREA_H = PORT_HEIGHT;
+
+const SCALE = 1;
 const ON = 1;
 const OFF = 0;
 
@@ -33,12 +37,14 @@ export class Ui{
     energyFont = [];
     leftTube = [];
     rightTube = [];
+    floor = new Image()
 
 
     constructor(cntx){
         this.context = cntx;
         this.onLight.src = "./res/onLamp.png";
         this.offLight.src = "./res/offLamp.png";
+        this.floor.src = "./res/floor.png";
 
         /*Cada modelo de porta tem sua respectiva
         representação para ligado e desligado
@@ -96,6 +102,7 @@ export class Ui{
         }
 
         this.context.clearRect(0, 0, canvaWidth , canvaHeight);
+        //this.context.drawImage(this.floor, 0, 0, FLOOR_WIDTH*SCALE, FLOOR_HEIGHT*SCALE);
 
         this.paintLine(x, y + diametro, canvaWidth/2, y + bord);
         this.context.drawImage(light, x - LIGHT_WIDTH * SCALE / 2, y, LIGHT_WIDTH*SCALE, LIGHT_HEIGHT*SCALE);

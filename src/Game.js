@@ -9,6 +9,7 @@ export class Game{
     ports = [];
     TruePortNode = new Node();
     FalsePortNode = new Node();
+    
 
     constructor(){
         this.ports[0] =(new OrPort());
@@ -26,18 +27,72 @@ export class Game{
 
     obs.: nós folas não inclusos*/
     init(nNode, nMod){
-        this.initRandomTree(this.G[0], nNode)
+        this.genRandomTree(this.G[0], nNode)
+        this.initTree(nNode, nMod);
+    }
+
+    /*Método que percorre toda a arvore
+    criando novos nós. i é o contador de nós criados,
+    enquanto maxNodes é o número máximo de nós*/
+    genRandomTree(node, maxNodes){
+        //console.log(this.G.length, "<=", maxNodes);
+
+        let n = this.getRandomIntInclusive(0,2);
+
+        if(n == 1){
+            if(this.G.length + 1 <= maxNodes){
+        
+                node.Linput = new Node();
+                this.G.push(node.Linput);
+                this.genRandomTree(node.Linput, maxNodes);
+    
+            }
+    
+            if(this.G.length + 1 <= maxNodes){
+               
+                node.Rinput = new Node();
+                this.G.push(node.Rinput);
+                this.genRandomTree(node.Linput, maxNodes);
+    
+            }
+        }else if(n == 2){
+            if(this.G.length + 1 <= maxNodes){
+           
+                node.Rinput = new Node();
+                this.G.push(node.Rinput);
+                this.genRandomTree(node.Rinput, maxNodes);
+    
+            }
+
+            if(this.G.length + 1 <= maxNodes){
+        
+                node.Linput = new Node();
+                this.G.push(node.Linput);
+                this.genRandomTree(node.Linput, maxNodes);
+    
+            }
+        }else{
+            if(this.G.length < 3){
+                this.genRandomTree(node,maxNodes);
+            }
+        }
+
+        
+    }
+
+    initTree(nNode, nMod){
+        this.initLeaf(this.G[0]);
 
         /*caso todos os nós possan ser modificados*/
         if(nNode == nMod){
-            for(let i = 0 ; i < nNode ; i++){
+            for(let i = 0 ; i < this.G.length ; i++){
                 //console.log("a",this.G[i]);
                 this.G[i].setMod(this.ports);
                 //console.log("d",this.G[i]);
                 
             }
         }
-        
+
         /*caso nMod<nNode*/
         else{
             let modCount = 0;
@@ -45,8 +100,7 @@ export class Game{
 
             /*Escolhe aleatoriamente os nós modificaveis*/
             while(modCount < nMod){
-                index = this.getRandomIntInclusive(0, nNode - 1);
-                console.log("infinito");
+                index = this.getRandomIntInclusive(0, this.G.length - 1);
 
                 if(this.G[index].mod == false){
                     this.G[index].setMod(this.ports);
@@ -61,39 +115,20 @@ export class Game{
                 }
             }
         }
+
     }
 
-    /*Método que percorre toda a arvore
-    criando novos nós. i é o contador de nós criados,
-    enquanto maxNodes é o número máximo de nós*/
-    initRandomTree(node, maxNodes){
-        //console.log(this.G.length, "<=", maxNodes);
-        
-        if(this.G.length + 1 <= maxNodes){
-        
-            node.Linput = new Node();
-            this.G.push(node.Linput);
-            this.initRandomTree(node.Linput, maxNodes);
-
+    initLeaf(node){
+        if(node.Linput == null){
+            node.Linput = this.getRandomBooleanPortNode();
+        }else{
+            this.initLeaf(node.Linput);
         }
-            
-        else{
-            node.Linput = this.getRandomBooleanPort();
-        }
-        
 
-       
-
-        if(this.G.length + 1 <= maxNodes){
-           
-            node.Rinput = new Node();
-            this.G.push(node.Rinput);
-            this.initRandomTree(node.Linput, maxNodes);
-
-        }
-            
-        else{
-           node.Rinput = this.getRandomBooleanPort();
+        if(node.Rinput == null){
+            node.Rinput = this.getRandomBooleanPortNode();
+        }else{
+            this.initLeaf(node.Rinput);
         }
     }
 
@@ -112,7 +147,7 @@ export class Game{
     }
 
     /*retorna uma porta booleana aleatoria*/
-    getRandomBooleanPort(){
+    getRandomBooleanPortNode(){
         let n = this.getRandomIntInclusive(0,1);
 
         

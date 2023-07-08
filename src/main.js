@@ -45,11 +45,7 @@ export class Main{
         let ui = this.gui;
 
         let game = new Game();
-        game.init(4,4);
-
-        for(let i = 0 ; i<game.G.length ; i++){
-            console.log(game.G[i]);
-        }
+        game.init(10,8);
 
         this.gui.paintGameBoard(game.G[0]);
         this.canva.addEventListener('click', function(event){

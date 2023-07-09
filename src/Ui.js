@@ -88,6 +88,7 @@ export class Ui{
         this.leftTube[ON].src = "./res/onLeftTube.png"
     }
 
+    //redesenha toda a tela da gameplay
     paintGameBoard(head){
         const x = canvaWidth/2;
         const y = raio;
@@ -106,11 +107,13 @@ export class Ui{
 
         this.paintLine(x, y + diametro, canvaWidth/2, y + bord);
         this.context.drawImage(light, x - LIGHT_WIDTH * SCALE / 2, y, LIGHT_WIDTH*SCALE, LIGHT_HEIGHT*SCALE);
-        
+
         this.paintTree(head, canvaWidth/2, y + bord);
     }
 
+    //desenha a arvore de portas
     paintTree(head, x, y){
+        let flag = false;
 
         head.x = x;
         head.y = y;
@@ -118,16 +121,27 @@ export class Ui{
         this.paintPort(head);
 
         if(head.Linput != null){
+
             this.paintLeftTube(head);
-            this.paintTree(head.Linput, x - bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
+            this.paintTree(head.Linput, x - bord - head.Linput.bifurcation*bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE + head.Linput.bifurcation);
         }
 
         if(head.Rinput != null){
+           
             this.paintRightTube(head);
-            this.paintTree(head.Rinput, x + bord, y + PORT_HEIGHT*SCALE/1.3 + TUBE_HEIGHT);
+            this.paintTree(head.Rinput, x + bord + head.Rinput.bifurcation*bord, y + PORT_HEIGHT*SCALE/1.3 + TUBE_HEIGHT + head.Rinput.bifurcation);
+        }
+
+        if(head.Linput != null){
+            this.paintLine(x, y, x - bord - head.Linput.bifurcation*bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
+        }
+
+        if(head.Rinput != null){
+            this.paintLine(x, y, x + bord + head.Rinput.bifurcation*bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
         }
     }
 
+    //desenha o tubo direito à porta
     paintRightTube(head){
         let x = head.x + PORT_WIDTH*SCALE - 3;
         let y = head.y + PORT_HEIGHT*SCALE/1.3;
@@ -140,6 +154,7 @@ export class Ui{
 
     }
 
+    //desenha o tubo esquerto à porta
     paintLeftTube(head){
         
         let x = head.x - (TUBE_WIDTH)*SCALE + 10;
@@ -153,11 +168,13 @@ export class Ui{
         
     }
 
+    //desenha a porta
     paintPort(head){
 
         if(head.getOutput()){
 
             if(head.mod){
+                //caso a porta seja modificavel e esteja ligada
 
                 if(head.port.id == "AND"){
                     this.context.drawImage(this.andModPort[ON], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
@@ -166,6 +183,7 @@ export class Ui{
                 }
 
             }else{
+                //caso a porta não seja modificavel e esteja ligada
                 if(head.port.id == "AND"){
                     this.context.drawImage(this.andNoModPort[ON], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
                 }else if(head.port.id == "OR"){
@@ -177,8 +195,10 @@ export class Ui{
 
         }else{
 
+            
             if(head.mod){
-
+            //caso a porta seja modificavel e esteja desligada
+                
                 if(head.port.id == "AND"){
                     this.context.drawImage(this.andModPort[OFF], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
                 }else if(head.port.id == "OR"){
@@ -186,6 +206,7 @@ export class Ui{
                 }
 
             }else{
+                //caso a porta não seja modificavel e esteja desligada
 
                 if(head.port.id == "AND"){
                     this.context.drawImage(this.andNoModPort[OFF], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
@@ -200,6 +221,7 @@ export class Ui{
 
     }
 
+    //desenha os nós folhas que são portas booleanas
     paintLeaf(head){
         if(head.port.id == "TRUE"){
             this.context.drawImage(this.energyFont[ON], head.x - LEAF_WIDTH*SCALE/2, head.y - LEAF_HEIGHT*SCALE/2, LEAF_WIDTH*SCALE, LEAF_HEIGHT*SCALE);
@@ -208,6 +230,7 @@ export class Ui{
         }
     }
 
+    //desenha linha
     paintLine(x1, y1, x2, y2){
         this.context.moveTo(x1, y1);
         this.context.lineTo(x2, y2);

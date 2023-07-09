@@ -35,7 +35,6 @@ export class Game{
     criando novos nós. i é o contador de nós criados,
     enquanto maxNodes é o número máximo de nós*/
     genRandomTree(node, maxNodes){
-        //console.log(this.G.length, "<=", maxNodes);
 
         let n = this.getRandomIntInclusive(0,2);
 
@@ -80,6 +79,7 @@ export class Game{
         
     }
 
+    /*inicializa os nós da arvore*/
     initTree(nNode, nMod){
         this.initLeaf(this.G[0]);
 
@@ -118,6 +118,8 @@ export class Game{
 
     }
 
+    /*incializa os nós folhas e define o valor de bifurcation para
+    todos os nós da arvore*/
     initLeaf(node){
         if(node.Linput == null){
             node.Linput = this.getRandomBooleanPortNode();
@@ -129,6 +131,10 @@ export class Game{
             node.Rinput = this.getRandomBooleanPortNode();
         }else{
             this.initLeaf(node.Rinput);
+        }
+
+        if(node.Rinput != null && node.Linput != null){
+            node.bifurcation = node.Rinput.bifurcation + node.Linput.bifurcation + 1;
         }
     }
 

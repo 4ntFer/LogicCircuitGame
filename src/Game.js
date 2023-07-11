@@ -4,9 +4,15 @@ import { TruePort } from "./TruePort.js";
 import { AndPort } from "./AndPort.js"; 
 import { OrPort } from "./OrPort.js"; 
 
+
+/*Representa o funcionamento interno do jogo,
+sem interface de usuario, somente suas estruturas de dados.*/
 export class Game{
-    G = [];
-    ports = [];
+    G = []; //todos os nós da arvore de jogo
+
+    ports = []; //todas as portas possiveis de serem
+                // assumidas pelos nós
+                
     TruePortNode = new Node();
     FalsePortNode = new Node();
     

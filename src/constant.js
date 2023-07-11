@@ -1,5 +1,2 @@
-export const raio = 30;
-export const diametro = raio*2;
-export const bord = 50;
-export const canvaWidth =  1280;
+export const canvaWidth =  1920;
 export const canvaHeight = 720;

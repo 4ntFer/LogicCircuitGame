@@ -19,33 +19,16 @@ export class Main{
         this.canva =  canva;
         this.context = canva.getContext("2d");
         this.wiondow = window;
-        this.gui = new Ui(canva.getContext("2d"));
     }
 
     start(){
-        /*const TruePortNode = new Node(null, null, new TruePort);
-        const FalsePortNode = new Node(null, null, new FalsePort);
-
-        let G = []; // vetor de node
-        let node = new Node(TruePortNode, FalsePortNode, new AndPort());
-        let vet = [];
-        let ui = this.gui;
-
-        vet.push(new OrPort());
-        node.setMod(vet);
-
-        G.push(node);
-        
-        this.gui.paintGameBoard(G[0]);
-        this.canva.addEventListener('click', function(event){
-            handleClick(event, G);
-            ui.paintGameBoard(G[0]);
-        });*/
-
-        let ui = this.gui;
+        let ui;
 
         let game = new Game();
         game.init(10,8);
+
+        this.gui = new Ui(this.canva.getContext("2d"), game.G[0]);
+        ui = this.gui;
 
         this.gui.paintGameBoard(game.G[0]);
         this.canva.addEventListener('click', function(event){

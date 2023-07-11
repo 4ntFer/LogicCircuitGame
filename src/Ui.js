@@ -1,28 +1,28 @@
-import { raio } from "./constant.js";
 import { canvaHeight } from "./constant.js";
 import { canvaWidth } from "./constant.js";
-import { bord } from "./constant.js";
-import { diametro } from "./constant.js";
 
-const LIGHT_WIDTH = 29;
-const LIGHT_HEIGHT = 46;
+const SCALE = 1;
 
-const PORT_WIDTH = 78;
-const PORT_HEIGHT = 35;
+const LIGHT_WIDTH = 29*SCALE;
+const LIGHT_HEIGHT = 46*SCALE;
 
-const LEAF_WIDTH = 85;
-const LEAF_HEIGHT = 84;
+const PORT_WIDTH = 78*SCALE;
+const PORT_HEIGHT = 35*SCALE;
 
-const TUBE_WIDTH = 17;
-const TUBE_HEIGHT = 36;
+const LEAF_WIDTH = 85*SCALE;
+const LEAF_HEIGHT = 84*SCALE;
 
-const FLOOR_WIDTH = 640;
-const FLOOR_HEIGHT = 360;
+const TUBE_WIDTH = 20*SCALE;
+const TUBE_HEIGHT = 20*SCALE;
+
+const FLOOR_WIDTH = 640*SCALE;
+const FLOOR_HEIGHT = 360*SCALE;
+
+const EDGE = PORT_WIDTH;
 
 export const CLICK_AREA_W = PORT_WIDTH;
 export const CLICK_AREA_H = PORT_HEIGHT;
 
-const SCALE = 1;
 const ON = 1;
 const OFF = 0;
 
@@ -37,10 +37,12 @@ export class Ui{
     energyFont = [];
     leftTube = [];
     rightTube = [];
+    horizontalTube = [];
+    verticalTube = [];
     floor = new Image()
 
 
-    constructor(cntx){
+    constructor(cntx, head){
         this.context = cntx;
         this.onLight.src = "./res/onLamp.png";
         this.offLight.src = "./res/offLamp.png";
@@ -86,12 +88,26 @@ export class Ui{
         this.leftTube[OFF].src = "./res/offLeftTube.png"
         this.leftTube[ON] = new Image();
         this.leftTube[ON].src = "./res/onLeftTube.png"
+
+        this.horizontalTube[OFF] = new Image();
+        this.horizontalTube[OFF].src = "./res/offMidTubeH.png";
+        this.horizontalTube[ON] = new Image();
+        this.horizontalTube[ON].src = "./res/onMidTubeH.png"
+
+        this.verticalTube[OFF] = new Image();
+        this.verticalTube[OFF].src = "./res/offMidTubeV.png"
+        this.verticalTube[ON] = new Image();
+        this.verticalTube[ON].src = "./res/onMidTubeV.png"
+
+        this.verticalTube[ON].onload = ()=>{
+            this.paintGameBoard(head);
+        }
     }
 
     //redesenha toda a tela da gameplay
     paintGameBoard(head){
         const x = canvaWidth/2;
-        const y = raio;
+        const y = EDGE;
 
         let light;
         
@@ -105,10 +121,10 @@ export class Ui{
         this.context.clearRect(0, 0, canvaWidth , canvaHeight);
         //this.context.drawImage(this.floor, 0, 0, FLOOR_WIDTH*SCALE, FLOOR_HEIGHT*SCALE);
 
-        this.paintLine(x, y + diametro, canvaWidth/2, y + bord);
-        this.context.drawImage(light, x - LIGHT_WIDTH * SCALE / 2, y, LIGHT_WIDTH*SCALE, LIGHT_HEIGHT*SCALE);
+        this.paintLine(x, y + EDGE, canvaWidth/2, y + EDGE);
+        this.context.drawImage(light, x - LIGHT_WIDTH/ 2, y, LIGHT_WIDTH, LIGHT_HEIGHT);
 
-        this.paintTree(head, canvaWidth/2, y + bord);
+        this.paintTree(head, canvaWidth/2, y + EDGE);
     }
 
     //desenha a arvore de portas
@@ -122,34 +138,48 @@ export class Ui{
 
         if(head.Linput != null){
 
+            this.paintTree(head.Linput, x - EDGE - head.Linput.bifurcation*EDGE, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT) + head.Linput.bifurcation*EDGE/2);
             this.paintLeftTube(head);
-            this.paintTree(head.Linput, x - bord - head.Linput.bifurcation*bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE + head.Linput.bifurcation);
         }
 
         if(head.Rinput != null){
            
+            
+            this.paintTree(head.Rinput, x + EDGE + head.Rinput.bifurcation*EDGE, y + PORT_HEIGHT/1.3 + TUBE_HEIGHT + head.Rinput.bifurcation * 2);
             this.paintRightTube(head);
-            this.paintTree(head.Rinput, x + bord + head.Rinput.bifurcation*bord, y + PORT_HEIGHT*SCALE/1.3 + TUBE_HEIGHT + head.Rinput.bifurcation);
         }
 
-        if(head.Linput != null){
-            this.paintLine(x, y, x - bord - head.Linput.bifurcation*bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
+        /*if(head.Linput != null){
+            this.paintLine(x, y, x - EDGE - head.Linput.bifurcation*EDGE, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
         }
 
         if(head.Rinput != null){
-            this.paintLine(x, y, x + bord + head.Rinput.bifurcation*bord, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
-        }
+            this.paintLine(x, y, x + EDGE + head.Rinput.bifurcation*EDGE, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
+        }*/
     }
 
     //desenha o tubo direito à porta
     paintRightTube(head){
-        let x = head.x + PORT_WIDTH*SCALE - 3;
-        let y = head.y + PORT_HEIGHT*SCALE/1.3;
+        let x = head.x + PORT_WIDTH/2;
+        let y = head.y + PORT_HEIGHT/2 - 5;
 
-        if(head.Rinput.getOutput()){
-            this.context.drawImage(this.rightTube[ON], x - PORT_WIDTH*SCALE/2, y, TUBE_WIDTH * SCALE, TUBE_HEIGHT * SCALE);
-        }else{
-            this.context.drawImage(this.rightTube[OFF], x - PORT_WIDTH*SCALE/2, y, TUBE_WIDTH * SCALE, TUBE_HEIGHT * SCALE);
+        let w = head.Rinput.x - x;
+        let h = head.Rinput.y - y - PORT_HEIGHT/2;
+
+
+        if(head.Rinput.port.id!="TRUE" && head.Rinput.port.id!="FALSE"){
+            
+            if(head.Rinput.getOutput()){
+                this.context.drawImage(this.horizontalTube[ON],  x, y, w, TUBE_HEIGHT);
+                this.context.drawImage(this.rightTube[ON], x + w, y, TUBE_WIDTH, TUBE_HEIGHT);
+                this.context.drawImage(this.verticalTube[ON], head.Rinput.x + 1, y + TUBE_HEIGHT - 2, TUBE_WIDTH, h);
+            }else{
+
+                
+                this.context.drawImage(this.horizontalTube[OFF], x, y, w, TUBE_HEIGHT);
+                this.context.drawImage(this.rightTube[OFF], x + w, y, TUBE_WIDTH , TUBE_HEIGHT);
+                this.context.drawImage(this.verticalTube[OFF],head.Rinput.x + 1,  y + TUBE_HEIGHT - 2, TUBE_WIDTH, h);
+            }
         }
 
     }
@@ -157,13 +187,26 @@ export class Ui{
     //desenha o tubo esquerto à porta
     paintLeftTube(head){
         
-        let x = head.x - (TUBE_WIDTH)*SCALE + 10;
-        let y = head.y + PORT_HEIGHT*SCALE/1.3;
+        let x = head.x  - PORT_WIDTH /2;
+        let y = head.y + TUBE_HEIGHT/2;
+
+        let w = x - head.Linput.x;
+        let h = head.Linput.y - y - PORT_HEIGHT/2;
+        console.log(head.Linput.x, w);
         
-        if(head.Linput.getOutput()){
-            this.context.drawImage(this.leftTube[ON], x - PORT_WIDTH*SCALE/2, y, TUBE_WIDTH * SCALE, TUBE_HEIGHT * SCALE);
-        }else{
-            this.context.drawImage(this.leftTube[OFF], x - PORT_WIDTH*SCALE/2, y, TUBE_WIDTH * SCALE, TUBE_HEIGHT * SCALE);
+        if(head.Linput.port.id!="TRUE" && head.Linput.port.id!="FALSE"){
+            
+            if(head.Linput.getOutput()){
+                this.context.drawImage(this.horizontalTube[ON], head.Linput.x + TUBE_WIDTH, y, w - TUBE_WIDTH, TUBE_HEIGHT);
+                this.context.drawImage(this.leftTube[ON], head.Linput.x, y, TUBE_WIDTH, TUBE_HEIGHT);
+                this.context.drawImage(this.verticalTube[ON], head.Linput.x - 1, y + TUBE_HEIGHT - 2, TUBE_WIDTH, h);
+            }else{
+
+                
+                this.context.drawImage(this.horizontalTube[OFF], head.Linput.x + TUBE_WIDTH, y, w - TUBE_WIDTH, TUBE_HEIGHT);
+                this.context.drawImage(this.leftTube[OFF], head.Linput.x, y, TUBE_WIDTH, TUBE_HEIGHT);
+                this.context.drawImage(this.verticalTube[OFF], head.Linput.x - 1,  y + TUBE_HEIGHT - 2, TUBE_WIDTH, h);
+            }
         }
         
     }
@@ -177,17 +220,17 @@ export class Ui{
                 //caso a porta seja modificavel e esteja ligada
 
                 if(head.port.id == "AND"){
-                    this.context.drawImage(this.andModPort[ON], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.andModPort[ON], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }else if(head.port.id == "OR") {
-                    this.context.drawImage(this.orModPort[ON], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.orModPort[ON], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }
 
             }else{
                 //caso a porta não seja modificavel e esteja ligada
                 if(head.port.id == "AND"){
-                    this.context.drawImage(this.andNoModPort[ON], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.andNoModPort[ON], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }else if(head.port.id == "OR"){
-                    this.context.drawImage(this.orNoModPort[ON], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.orNoModPort[ON], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }else{
                     this.paintLeaf(head);
                 }
@@ -200,18 +243,18 @@ export class Ui{
             //caso a porta seja modificavel e esteja desligada
                 
                 if(head.port.id == "AND"){
-                    this.context.drawImage(this.andModPort[OFF], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.andModPort[OFF], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }else if(head.port.id == "OR"){
-                    this.context.drawImage(this.orModPort[OFF], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.orModPort[OFF], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }
 
             }else{
                 //caso a porta não seja modificavel e esteja desligada
 
                 if(head.port.id == "AND"){
-                    this.context.drawImage(this.andNoModPort[OFF], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.andNoModPort[OFF], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }else if(head.port.id == "OR"){
-                    this.context.drawImage(this.orNoModPort[OFF], head.x - PORT_WIDTH*SCALE/2, head.y, PORT_WIDTH*SCALE, PORT_HEIGHT*SCALE);
+                    this.context.drawImage(this.orNoModPort[OFF], head.x - PORT_WIDTH/2, head.y, PORT_WIDTH, PORT_HEIGHT);
                 }else{
                     this.paintLeaf(head);
                 }
@@ -224,9 +267,9 @@ export class Ui{
     //desenha os nós folhas que são portas booleanas
     paintLeaf(head){
         if(head.port.id == "TRUE"){
-            this.context.drawImage(this.energyFont[ON], head.x - LEAF_WIDTH*SCALE/2, head.y - LEAF_HEIGHT*SCALE/2, LEAF_WIDTH*SCALE, LEAF_HEIGHT*SCALE);
+            this.context.drawImage(this.energyFont[ON], head.x - LEAF_WIDTH/2, head.y - LEAF_HEIGHT/2, LEAF_WIDTH, LEAF_HEIGHT);
         }else if(head.port.id == "FALSE"){
-            this.context.drawImage(this.energyFont[OFF], head.x - LEAF_WIDTH*SCALE/2, head.y - LEAF_HEIGHT*SCALE/2, LEAF_WIDTH*SCALE, LEAF_HEIGHT*SCALE);
+            this.context.drawImage(this.energyFont[OFF], head.x - LEAF_WIDTH/2, head.y - LEAF_HEIGHT/2, LEAF_WIDTH, LEAF_HEIGHT);
         }
     }
 

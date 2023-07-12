@@ -1,2 +1,2 @@
-export const canvaWidth =  1920;
+export const canvaWidth =  1280;
 export const canvaHeight = 720;

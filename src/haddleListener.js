@@ -1,11 +1,12 @@
 import {CLICK_AREA_W} from "./Ui.js";
 import {CLICK_AREA_H} from "./Ui.js";
+import { canvaHeight } from "./constant.js";
+import { canvaWidth } from "./constant.js";
 import {Ui} from "./Ui.js";
 
 export function handleClick(event, G, gui){
     let clickX = event.offsetX;
     let clickY = event.offsetY;
-    let Ui = gui;
 
     
     for(let i = 0 ; i < G.length ; i++){
@@ -22,4 +23,33 @@ export function handleClick(event, G, gui){
     }
 
 
+}
+
+export function handleMove(event, gui){
+    let mousePositionX =  event.offsetX;
+    let mousePositionY = event.offsetY;
+
+    if(mousePositionX >= canvaWidth*0.8){
+        gui.horizontalPositiveMove= true;
+    }else{
+        gui.horizontalPositiveMove= false;
+    }
+    
+    if(mousePositionX<= canvaWidth*0.2){
+        gui.horizontalNegativeMove = true;
+    }else{
+        gui.horizontalNegativeMove = false;
+    }
+
+    if(mousePositionY >= canvaHeight*0.8){
+        gui.verticalPositiveMove= true;
+    }else{
+        gui.verticalPositiveMove= false;
+    }
+    
+    if(mousePositionY<= canvaHeight*0.2){
+        gui.verticalNegativeMove = true;
+    }else{
+        gui.verticalNegativeMove = false;
+    }
 }

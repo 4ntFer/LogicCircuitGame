@@ -1,7 +1,8 @@
 import { canvaHeight } from "./constant.js";
 import { canvaWidth } from "./constant.js";
+import { handleMove } from "./haddleListener.js";
 
-const SCALE = 1;
+const SCALE = 1.5;
 
 const LIGHT_WIDTH = 29*SCALE;
 const LIGHT_HEIGHT = 46*SCALE;
@@ -27,7 +28,6 @@ const ON = 1;
 const OFF = 0;
 
 export class Ui{
-    context;
     onLight = new Image();
     offLight = new Image();
     andModPort = [];
@@ -41,9 +41,28 @@ export class Ui{
     verticalTube = [];
     floor = new Image()
 
+    offsetX = EDGE;
+    offsetY = canvaWidth/2;
 
-    constructor(cntx, head){
-        this.context = cntx;
+    horizontalPositiveMove = false;
+    horizontalNegativeMove = false;
+
+    verticalPositiveMove = false;
+    verticalNegativeMove = false;
+
+    canva;
+    context;
+
+
+    constructor(canva, head){
+        this.canva = canva;
+        this.context = canva.getContext('2d');
+
+        this.canva.addEventListener('mousemove', (event)=>{
+            handleMove(event, this);
+        });
+
+
         this.onLight.src = "./res/onLamp.png";
         this.offLight.src = "./res/offLamp.png";
         this.floor.src = "./res/floor.png";
@@ -109,6 +128,8 @@ export class Ui{
         const x = canvaWidth/2;
         const y = EDGE;
 
+        this.offSetRecalculate();
+
         let light;
         
         if(head.getOutput()){
@@ -122,9 +143,9 @@ export class Ui{
         //this.context.drawImage(this.floor, 0, 0, FLOOR_WIDTH*SCALE, FLOOR_HEIGHT*SCALE);
 
         this.paintLine(x, y + EDGE, canvaWidth/2, y + EDGE);
-        this.context.drawImage(light, x - LIGHT_WIDTH/ 2, y, LIGHT_WIDTH, LIGHT_HEIGHT);
+        this.context.drawImage(light, x - LIGHT_WIDTH/ 2  - this.offsetX, y - this.offsetY , LIGHT_WIDTH, LIGHT_HEIGHT);
 
-        this.paintTree(head, canvaWidth/2, y + EDGE);
+        this.paintTree(head, canvaWidth/2 - this.offsetX , y + EDGE - this.offsetY);
     }
 
     //desenha a arvore de portas
@@ -138,14 +159,14 @@ export class Ui{
 
         if(head.Linput != null){
 
-            this.paintTree(head.Linput, x - EDGE - head.Linput.bifurcation*EDGE, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT) + head.Linput.bifurcation*EDGE/2);
+            this.paintTree(head.Linput, x - EDGE - head.Linput.bifurcation*EDGE , y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT) + head.Linput.bifurcation*EDGE/2 );
             this.paintLeftTube(head);
         }
 
         if(head.Rinput != null){
            
             
-            this.paintTree(head.Rinput, x + EDGE + head.Rinput.bifurcation*EDGE, y + PORT_HEIGHT/1.3 + TUBE_HEIGHT + head.Rinput.bifurcation * 2);
+            this.paintTree(head.Rinput, x + EDGE + head.Rinput.bifurcation*EDGE , y + PORT_HEIGHT/1.3 + TUBE_HEIGHT + head.Rinput.bifurcation * 2 );
             this.paintRightTube(head);
         }
 
@@ -160,8 +181,8 @@ export class Ui{
 
     //desenha o tubo direito à porta
     paintRightTube(head){
-        let x = head.x + PORT_WIDTH/2;
-        let y = head.y + PORT_HEIGHT/2 - 5;
+        let x = head.x + PORT_WIDTH/2 ;
+        let y = head.y + PORT_HEIGHT/2 - 5 ;
 
         let w = head.Rinput.x - x;
         let h = head.Rinput.y - y - PORT_HEIGHT/2;
@@ -187,12 +208,11 @@ export class Ui{
     //desenha o tubo esquerto à porta
     paintLeftTube(head){
         
-        let x = head.x  - PORT_WIDTH /2;
-        let y = head.y + TUBE_HEIGHT/2;
+        let x = head.x  - PORT_WIDTH /2 ;
+        let y = head.y + TUBE_HEIGHT/2 ;
 
         let w = x - head.Linput.x;
         let h = head.Linput.y - y - PORT_HEIGHT/2;
-        console.log(head.Linput.x, w);
         
         if(head.Linput.port.id!="TRUE" && head.Linput.port.id!="FALSE"){
             
@@ -280,5 +300,17 @@ export class Ui{
         this.context.stroke();
     }
 
-
+    offSetRecalculate(){
+        if(this.horizontalPositiveMove){
+            this.offsetX += 10;
+        }else if(this.horizontalNegativeMove){
+            this.offsetX -= 10;
+        }
+    
+        if(this.verticalPositiveMove){
+            this.offsetY += 10;
+        }else if(this.verticalNegativeMove){
+            this.offsetY -= 10;
+        }
+    }
 }

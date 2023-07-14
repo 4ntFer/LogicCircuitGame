@@ -48,6 +48,7 @@ export class Game{
             if(this.G.length + 1 <= maxNodes){
         
                 node.Linput = new Node();
+                node.Linput.output = node;
                 this.G.push(node.Linput);
                 this.genRandomTree(node.Linput, maxNodes);
     
@@ -56,6 +57,7 @@ export class Game{
             if(this.G.length + 1 <= maxNodes){
                
                 node.Rinput = new Node();
+                node.Rinput.output = node;
                 this.G.push(node.Rinput);
                 this.genRandomTree(node.Linput, maxNodes);
     
@@ -64,6 +66,7 @@ export class Game{
             if(this.G.length + 1 <= maxNodes){
            
                 node.Rinput = new Node();
+                node.Rinput.output = node;
                 this.G.push(node.Rinput);
                 this.genRandomTree(node.Rinput, maxNodes);
     
@@ -72,6 +75,7 @@ export class Game{
             if(this.G.length + 1 <= maxNodes){
         
                 node.Linput = new Node();
+                node.Linput.output = node;
                 this.G.push(node.Linput);
                 this.genRandomTree(node.Linput, maxNodes);
     

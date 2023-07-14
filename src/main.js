@@ -21,14 +21,12 @@ export class Main{
         let mousePositionY;
 
         let game = new Game();
-        game.init(10,8);
+        game.init(20,20);
 
-        this.gui = new Ui(this.canva, game.G[0]);
+        this.gui = new Ui(this.canva, game.G[0], game.G.pop);
         ui = this.gui;
-
-        this.gui.paintGameBoard(game.G[0]);
         this.canva.addEventListener('click', function(event){
-            handleClick(event, game.G);
+            handleClick(event, game.G, ui);
         })
 
         setInterval(()=>{

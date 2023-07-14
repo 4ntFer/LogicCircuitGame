@@ -1,6 +1,7 @@
 import { canvaHeight } from "./constant.js";
 import { canvaWidth } from "./constant.js";
 import { handleMove } from "./haddleListener.js";
+import { ShortcutUIFunc } from "./ShortcutUIFunc.js";
 
 const SCALE = 1.5;
 
@@ -15,6 +16,9 @@ const LEAF_HEIGHT = 84*SCALE;
 
 const TUBE_WIDTH = 20*SCALE;
 const TUBE_HEIGHT = 20*SCALE;
+
+const SHORTCUT_WIDTH = 20*SCALE;
+const SHORTCUT_HEIGHT = 20*SCALE;
 
 const FLOOR_WIDTH = 640*SCALE;
 const FLOOR_HEIGHT = 360*SCALE;
@@ -39,10 +43,15 @@ export class Ui{
     rightTube = [];
     horizontalTube = [];
     verticalTube = [];
+    shortcutImage = new Image();
     floor = new Image()
 
-    offsetX = EDGE;
-    offsetY = canvaWidth/2;
+    offsetX = 0;
+    offsetY = 0;
+    
+    currentNode; //a ultimo nó modificado pelo usuário
+    shortcutUI = new ShortcutUIFunc(this); //para o funcionamento interno dos
+                                            //botões de atalho
 
     horizontalPositiveMove = false;
     horizontalNegativeMove = false;
@@ -50,11 +59,13 @@ export class Ui{
     verticalPositiveMove = false;
     verticalNegativeMove = false;
 
+    inShortcutScene = false;
+
     canva;
     context;
 
 
-    constructor(canva, head){
+    constructor(canva, head, currentNode){
         this.canva = canva;
         this.context = canva.getContext('2d');
 
@@ -72,6 +83,8 @@ export class Ui{
         diferenciando se sua saída é true ou false.
         Portas que não podem ser modificadas também
         modelos diferentes daqueles que podem*/
+
+        this.shortcutImage.src = "./res/shortcut.png";
 
         this.andModPort[OFF] = new Image();
         this.andModPort[OFF].src = "./res/andOffPortMod.png";
@@ -177,6 +190,9 @@ export class Ui{
         if(head.Rinput != null){
             this.paintLine(x, y, x + EDGE + head.Rinput.bifurcation*EDGE, y + (PORT_HEIGHT/1.3 + TUBE_HEIGHT)*SCALE);
         }*/
+        if(head == this.currentNode){
+            this.paintShortcut(head); 
+        }
     }
 
     //desenha o tubo direito à porta
@@ -300,17 +316,123 @@ export class Ui{
         this.context.stroke();
     }
 
+    /*Desenha os atalhos para os nodes
+    conectados ao node recebido pelo método
+    além de iniciar a posição de seus
+    botões*/
+    paintShortcut(node){
+        let angle;
+
+        if(node.output != null){
+            //calcula o angulo para rotacionar shortcutImage
+            angle = this.angleCalculate(node, node.output);
+
+            this.context.translate(node.x, node.y);
+            this.context.drawImage(this.shortcutImage, 0 - SHORTCUT_HEIGHT, 0 - SHORTCUT_HEIGHT - 10, SHORTCUT_HEIGHT, SHORTCUT_HEIGHT);
+            this.context.translate((node.x)*(-1), (node.y)*(-1));
+
+            this.shortcutUI.setOutputButtonPosition(node.x  - SHORTCUT_HEIGHT , node.y - SHORTCUT_HEIGHT, SHORTCUT_WIDTH, SHORTCUT_HEIGHT + 10);
+        }
+
+        if(node.Linput!=null){
+            if(node.Linput.port.id!="TRUE" && node.Linput.port.id!="FALSE"){
+                
+                //calcula o angulo para rotacionar shortcutImage
+                angle = this.angleCalculate(node, node.Linput);
+
+                this.context.translate(node.x - PORT_WIDTH, node.y + PORT_HEIGHT);
+                this.context.rotate(angle*(Math.PI/180));
+                this.context.drawImage(this.shortcutImage, 0-SHORTCUT_WIDTH/2, 0, SHORTCUT_WIDTH, SHORTCUT_HEIGHT);
+                this.context.rotate(-angle*(Math.PI/180));
+                this.context.translate((node.x  - PORT_WIDTH)*(-1), (node.y + PORT_HEIGHT)*(-1));
+
+                this.shortcutUI.setLinputButtonPosition(node.x  - PORT_WIDTH + 5, node.y + 10,  SHORTCUT_WIDTH, SHORTCUT_HEIGHT + 10);
+            }
+        }
+
+        if(node.Rinput!=null){
+            if(node.Rinput.port.id!="TRUE" && node.Rinput.port.id!="FALSE"){
+                
+                angle = this.angleCalculate(node, node.Rinput);
+
+                this.context.translate(node.x + PORT_WIDTH, node.y + PORT_HEIGHT);
+                this.context.rotate(angle*(Math.PI/180));
+                this.context.drawImage(this.shortcutImage, 0-SHORTCUT_WIDTH/2, 0, -SHORTCUT_WIDTH, SHORTCUT_HEIGHT);
+                this.context.rotate(-angle*(Math.PI/180));
+                this.context.translate((node.x  + PORT_WIDTH)*(-1), (node.y + PORT_HEIGHT)*(-1));
+
+                this.shortcutUI.setRinputButtonPosition(node.x  + PORT_WIDTH/2 + 20, node.y,  SHORTCUT_WIDTH, SHORTCUT_HEIGHT + 10);
+            }
+        }
+    }
+
+    /*Calculo o angulo produzito por
+    uma reta vertical que passa pela cordenada x
+    de node1 e uma reta que intersecta node1 e
+    node2*/
+    angleCalculate(node1, node2){
+        let x1 = 0;
+        let y1 = -100 - node1.y;
+        let x2 = node2.x - node1.x;
+        let y2 = node2.y - node1.y + PORT_HEIGHT/2;
+
+        let angle = Math.acos((x1*x2+y1*y2)/
+                (Math.sqrt(x1*x1 + y1*y1)*Math.sqrt(x2*x2 + y2*y2)));
+
+        angle *= 57.2958;
+
+        if(x2 >= 0){
+            return angle;
+        }else{
+            return -angle;
+        }
+    }
+
+    executeShortcut(){
+        this.inShortcutScene = true;
+    }
+
+    //Calcula o offset do frame
     offSetRecalculate(){
-        if(this.horizontalPositiveMove){
-            this.offsetX += 10;
-        }else if(this.horizontalNegativeMove){
-            this.offsetX -= 10;
+        if(this.inShortcutScene == false){
+            if(this.horizontalPositiveMove){
+                this.offsetX += 10;
+            }else if(this.horizontalNegativeMove){
+                this.offsetX -= 10;
+            }
+        
+            if(this.verticalPositiveMove){
+                this.offsetY += 10;
+            }else if(this.verticalNegativeMove){
+                this.offsetY -= 10;
+            }
+        }else{
+            if(canvaWidth/2 - 10 <= this.currentNode.x && canvaWidth/2 + 10 >= this.currentNode.x &&
+            canvaHeight/2 - 10 <= this.currentNode.y && canvaHeight/2 + 10 >= this.currentNode.y){
+                console.log("funciona pfv")
+                this.inShortcutScene = false
+                this.horizontalPositiveMove = false;
+                this.horizontalNegativeMove = false;
+                this.verticalPositiveMove = false;
+                this.verticalNegativeMove = false ;
+            }else{
+                console.log(this.currentNode.x, this.currentNode.y);
+                if(canvaWidth/2 - 10 > this.currentNode.x ){
+                    this.offsetX -= 10;
+                }else if( canvaWidth/2 + 10 < this.currentNode.x ){
+                    this.offsetX += 10;
+                }
+                
+                if(canvaHeight/2 - 10 > this.currentNode.y ){
+                    this.offsetY -= 10;
+                }else if( canvaHeight/2 + 10 < this.currentNode.y ){
+                    this.offsetY += 10;
+                }
+            }
         }
-    
-        if(this.verticalPositiveMove){
-            this.offsetY += 10;
-        }else if(this.verticalNegativeMove){
-            this.offsetY -= 10;
-        }
+    }
+
+    setCurrentNode(node){
+        this.currentNode = node;
     }
 }

@@ -6,6 +6,7 @@ import {FalsePort} from "./FalsePort.js"
 export class Node{
     x = 0;
     y = 0;
+    output = null;
     Linput = null;
     Rinput = null;
     port; //a porta atual do nó

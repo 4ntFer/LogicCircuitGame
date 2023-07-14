@@ -409,14 +409,12 @@ export class Ui{
         }else{
             if(canvaWidth/2 - 10 <= this.currentNode.x && canvaWidth/2 + 10 >= this.currentNode.x &&
             canvaHeight/2 - 10 <= this.currentNode.y && canvaHeight/2 + 10 >= this.currentNode.y){
-                console.log("funciona pfv")
                 this.inShortcutScene = false
                 this.horizontalPositiveMove = false;
                 this.horizontalNegativeMove = false;
                 this.verticalPositiveMove = false;
                 this.verticalNegativeMove = false ;
             }else{
-                console.log(this.currentNode.x, this.currentNode.y);
                 if(canvaWidth/2 - 10 > this.currentNode.x ){
                     this.offsetX -= 10;
                 }else if( canvaWidth/2 + 10 < this.currentNode.x ){

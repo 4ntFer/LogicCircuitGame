@@ -8,8 +8,6 @@ export function handleClick(event, G, gui){
     let clickX = event.offsetX;
     let clickY = event.offsetY;
 
-    console.log("presss: ", clickX, clickY);
-
     if(clickX > gui.shortcutUI.outputButton.x && clickX < gui.shortcutUI.outputButton.x + gui.shortcutUI.outputButton.w
         && clickY > gui.shortcutUI.outputButton.y && clickY < gui.shortcutUI.outputButton.y + gui.shortcutUI.outputButton.h){
             
